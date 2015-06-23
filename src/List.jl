@@ -201,22 +201,27 @@ function remove!(lst::DoublyLinkedList, idx::Int)
     return nothing;
   end
   lst.len -= 1;
-  node = nothing;
   if idx == 1
     shift!(lst);
   elseif idx == lst.len
     pop!(lst);
-  elseif idx < lst.len / 2
-    node = lst.head.next;
-    for i=2:idx-1; node = node.next; end
   else
-    node = lst.tail.prev;
-    for i=lst.len-1:idx-1; node = node.next; end
+    if idx < lst.len / 2
+      node = lst.head.next;
+      for i=2:idx-1; node = node.next; end
+      result = node.next;
+      node.next = node.next.next;
+      node.next.prev = node;
+      return result;
+    else
+      node = lst.tail.prev;
+      for i=lst.len-1:idx+1; node = node.prev; end
+      result = node.prev;
+      node.prev = node.prev.prev;
+      node.prev.next = node;
+      return result;
+    end
   end
-  result = node.next;
-  node.next = node.next.next;
-  node.next.prev = node;
-  return result;
 end
 
 #! Remove an item from a doubly linked list
