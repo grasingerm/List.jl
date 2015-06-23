@@ -77,6 +77,7 @@ end
 function Base.empty!(lst::SinglyLinkedList)
   lst.len = 0;
   lst.head = nothing;
+  lst.tail = nothing;
 end
 
 #=
