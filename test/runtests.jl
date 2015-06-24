@@ -95,6 +95,12 @@ for i=1:50
   @test pop!(lst).val == some_array[i];
 end
 
+t = (2, 3, 5, 1, 4);
+lst = DoublyLinkedList{Int64}(t...);
+for i=1:length(t);
+  @test remove!(lst, 1).val == t[i];
+end
+
 println("DOUBLY LINKED LIST TESTS PASSED!");
 
 # write your own tests here
@@ -187,6 +193,12 @@ some_array = rand(-50:50, 50);
 @test unshift!(lst, some_array) == 50;
 for i=1:50
   @test pop!(lst).val == some_array[i];
+end
+
+t = (2, 3, 5, 1, 4);
+lst = DoublyLinkedList{Int64}(t...);
+for i=1:length(t);
+  @test remove!(lst, 1).val == t[i];
 end
 
 println("SINGLY LINKED LIST TESTS PASSED!");

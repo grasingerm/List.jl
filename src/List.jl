@@ -24,6 +24,13 @@ type SinglyLinkedList{T} <: AbstractList{T}
   len::Int
 
   SinglyLinkedList() = new(nothing, nothing, 0);
+
+  #! Construction using argument list
+  function SinglyLinkedList(args...)
+    lst = new(nothing, nothing, 0);
+    for arg in args; push!(lst, arg); end
+    return lst;
+  end
 end
 
 #! push an item to a singly linked list
@@ -162,6 +169,13 @@ type DoublyLinkedList{T} <: AbstractList{T}
   len::Int
 
   DoublyLinkedList() = new(nothing, nothing, 0);
+
+  #! Construction using argument list
+  function DoublyLinkedList(args...)
+    lst = new(nothing, nothing, 0);
+    for arg in args; push!(lst, arg); end
+    return lst;
+  end
 end
 
 #! push an item to a doubly linked list
