@@ -36,11 +36,11 @@ function Base.push!{T}(lst::SinglyLinkedList{T}, val::T)
   if lst.head == nothing
     lst.head = new_node;
     lst.tail = new_node;
-    lst.len = 1;
+    return lst.len = 1;
   end
   lst.tail.next = new_node;
   lst.tail = new_node;
-  lst.len += 1;
+  return lst.len += 1;
 end
 
 #! push an array of item to a singly linked list
@@ -50,6 +50,7 @@ end
 #! \return New length
 function Base.push!{T}(lst::SinglyLinkedList{T}, vals::Array{T})
   for val in vals; push!(lst, val); end
+  return length(lst);
 end
 
 #! Add an item to the beginning of a singly linked list
@@ -62,11 +63,11 @@ function unshift!{T}(lst::SinglyLinkedList{T}, val::T)
   if lst.head == nothing
     lst.head = new_node;
     lst.tail = new_node;
-    lst.len = 1;
+    return lst.len = 1;
   end
   new_node.next = lst.head;
   lst.head = new_node;
-  lst.len += 1;
+  return lst.len += 1;
 end
 
 #! Add an array items to the beginning of a singly linked list
@@ -76,6 +77,7 @@ end
 #! \return New length
 function unshift!{T}(lst::SinglyLinkedList{T}, vals::Array{T})
   for val in vals; unshift!(lst, val); end
+  return length(lst);
 end
 
 #! Remove an item from a singly linked list
@@ -87,11 +89,13 @@ function remove!(lst::SinglyLinkedList, idx::Int)
   if idx > lst.len
     return nothing;
   end
+  if idx == 1
+    return shift!(lst);
+  elseif idx == lst.len
+    return pop!(lst);
+  end
   lst.len -= 1;
   node = lst.head;
-  if idx == 1
-    shift!(lst);
-  end
   for i=2:idx-1; node = node.next; end
   result = node.next;
   node.next = node.next.next;
@@ -104,6 +108,13 @@ end
 #! \return Front element
 function shift!(lst::SinglyLinkedList)
   if lst.head == nothing; return nothing; end
+  lst.len -= 1;
+  if lst.head == lst.tail
+    result = lst.head;
+    lst.head = nothing;
+    lst.tail = nothing;
+    return result;
+  end
   result = lst.head;
   lst.head = result.next;
   return result;
@@ -113,7 +124,24 @@ end
 #!
 #! \param lst Singly linked list
 #! \return End element
-pop!(lst::SinglyLinkedList) = remove!(lst, lst.len);
+function pop!(lst::SinglyLinkedList)
+  if lst.head == nothing; return nothing; end
+  lst.len -= 1;
+  if lst.head == lst.tail
+    result = lst.head;
+    lst.head = nothing;
+    lst.tail = nothing;
+    return result;
+  end
+  node = lst.head;
+  while node.next.next != nothing
+    node = node.next;
+  end
+  result = node.next;
+  node.next = nothing;
+  lst.tail = node;
+  return result;
+end
 
 #! Doubly linked list node implementation
 type DoublyLinkedListNode{T} <: AbstractNode{T}
@@ -162,6 +190,7 @@ end
 #! \return New length
 function Base.push!{T}(lst::DoublyLinkedList{T}, vals::Array{T})
   for val in vals; push!(lst, val); end
+  return length(lst);
 end
 
 #! Add an item to the beginning of a doubly linked list
@@ -174,12 +203,12 @@ function unshift!{T}(lst::DoublyLinkedList{T}, val::T)
   if lst.head == nothing
     lst.head = new_node;
     lst.tail = new_node;
-    lst.len = 1;
+    return lst.len = 1;
   end
   new_node.next = lst.head;
   lst.head.prev = new_node;
   lst.head = new_node;
-  lst.len += 1;
+  return lst.len += 1;
 end
 
 #! Add an array items to the beginning of a doubly linked list
@@ -189,6 +218,7 @@ end
 #! \return New length
 function unshift!{T}(lst::DoublyLinkedList{T}, vals::Array{T})
   for val in vals; unshift!(lst, val); end
+  return length(lst);
 end
 
 #! Remove an item from a doubly linked list
@@ -200,25 +230,25 @@ function remove!(lst::DoublyLinkedList, idx::Int)
   if idx > lst.len
     return nothing;
   end
-  lst.len -= 1;
   if idx == 1
-    shift!(lst);
+    return shift!(lst);
   elseif idx == lst.len
-    pop!(lst);
+    return pop!(lst);
   else
+    lst.len -= 1;
     if idx < lst.len / 2
       node = lst.head.next;
       for i=2:idx-1; node = node.next; end
-      result = node.next;
-      node.next = node.next.next;
-      node.next.prev = node;
+      result = node;
+      node.prev.next = node.next;
+      node.next.prev = node.prev;
       return result;
     else
       node = lst.tail.prev;
-      for i=lst.len-1:idx+1; node = node.prev; end
-      result = node.prev;
-      node.prev = node.prev.prev;
-      node.prev.next = node;
+      for i=idx+1:lst.len; node = node.prev; end
+      result = node;
+      node.prev.next = node.next;
+      node.next.prev = node.prev;
       return result;
     end
   end
@@ -230,12 +260,12 @@ end
 #! \param pnode Pointer to node to remove
 #! \return Node that was removed
 function remove!(lst::DoublyLinkedList, pnode::DoublyLinkedListNode)
-  lst.len -= 1;
   if lst.head == pnode
-    shift!(lst);
+    return shift!(lst);
   elseif lst.tail == pnode
-    pop!(lst);
+    return pop!(lst);
   else
+    lst.len -= 1;
     pnode.prev.next = pnode.next;
     pnode.next.prev = pnode.prev;
     return pnode;
@@ -247,14 +277,21 @@ end
 #! \param lst Doubly linked list
 #! \return Node that was removed from front
 function shift!(lst::DoublyLinkedList)
-  if lst.head != nothing
+  if lst.head == nothing
+    return nothing
+  elseif lst.head == lst.tail
+    lst.len = 0;
+    result = lst.head;
+    lst.head = nothing;
+    lst.tail = nothing;
+    return result;
+  else
     lst.len -= 1;
     @assert lst.tail != nothing
     result = lst.head;
     lst.head = lst.head.next;
     lst.head.prev = nothing;
-  else
-    return nothing;
+    return result;
   end
 end
 
@@ -263,14 +300,17 @@ end
 #! \param lst Doubly linked list
 #! \return Node that was removed from end
 function pop!(lst::DoublyLinkedList)
-  if lst.tail != nothing
+  if lst.tail == nothing
+    return nothing;
+  elseif lst.tail == lst.head
+    return shift!(lst);
+  else
     lst.len -= 1;
     @assert lst.head != nothing
     result = lst.tail;
     lst.tail = lst.tail.prev;
     lst.tail.next = nothing;
-  else
-    return nothing;
+    return result;
   end
 end
 
@@ -314,5 +354,18 @@ end
 Base.length(lst::AbstractList) = lst.len;
 front(lst::AbstractList) = lst.head;
 back(lst::AbstractList) = lst.tail;
+function Base.show(io::IOStream, lst::AbstractList)
+  if lst.head == nothing
+    @assert lst.tail == nothing
+    print(io, "list()");
+  end
+  print(io, "list(");
+  cnode = lst.head;
+  while cnode.next != nothing
+    print(io, cnode.val, ", ");
+  end
+  print(io, lst.tail.val, ")");
+end
+Base.show(lst::AbstractList) = show(STDOUT, lst);
 
 end # module
