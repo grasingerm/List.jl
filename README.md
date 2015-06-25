@@ -16,3 +16,4 @@
 * [ ] create `cat!` function
 * [ ] create `reverse!`
 * [ ] create views?
+* [ ] test/debug Lists with `pmap`
