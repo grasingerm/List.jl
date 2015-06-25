@@ -2,7 +2,7 @@ module List
 
 export SinglyLinkedList, SinglyLinkedListNode
 export DoublyLinkedList, DoublyLinkedListNode
-export unshift!, pop!, shift!, empty!, remove!
+export remove!, front, back
 
 abstract AbstractList{T}
 abstract AbstractNode{T}
@@ -65,7 +65,7 @@ end
 #! \param lst Singly linked list to push to
 #! \param val Data vaue in which to add
 #! \return New length
-function unshift!{T}(lst::SinglyLinkedList{T}, val::T)
+function Base.unshift!{T}(lst::SinglyLinkedList{T}, val::T)
   new_node = SinglyLinkedListNode{T}(val);
   if lst.head == nothing
     lst.head = new_node;
@@ -82,7 +82,7 @@ end
 #! \param lst Singly linked list to push to
 #! \param vals Array of data to be added
 #! \return New length
-function unshift!{T}(lst::SinglyLinkedList{T}, vals::Array{T})
+function Base.unshift!{T}(lst::SinglyLinkedList{T}, vals::Array{T})
   for val in vals; unshift!(lst, val); end
   return length(lst);
 end
@@ -113,7 +113,7 @@ end
 #!
 #! \param lst Singly linked list
 #! \return Front element
-function shift!(lst::SinglyLinkedList)
+function Base.shift!(lst::SinglyLinkedList)
   if lst.head == nothing; return nothing; end
   lst.len -= 1;
   if lst.head == lst.tail
@@ -131,7 +131,7 @@ end
 #!
 #! \param lst Singly linked list
 #! \return End element
-function pop!(lst::SinglyLinkedList)
+function Base.pop!(lst::SinglyLinkedList)
   if lst.head == nothing; return nothing; end
   lst.len -= 1;
   if lst.head == lst.tail
@@ -212,7 +212,7 @@ end
 #! \param lst Doubly linked list to push to
 #! \param val Data vaue in which to add
 #! \return New length
-function unshift!{T}(lst::DoublyLinkedList{T}, val::T)
+function Base.unshift!{T}(lst::DoublyLinkedList{T}, val::T)
   new_node = DoublyLinkedListNode{T}(val);
   if lst.head == nothing
     lst.head = new_node;
@@ -230,7 +230,7 @@ end
 #! \param lst Doubly linked list to push to
 #! \param vals Array of data to be added
 #! \return New length
-function unshift!{T}(lst::DoublyLinkedList{T}, vals::Array{T})
+function Base.unshift!{T}(lst::DoublyLinkedList{T}, vals::Array{T})
   for val in vals; unshift!(lst, val); end
   return length(lst);
 end
@@ -290,7 +290,7 @@ end
 #!
 #! \param lst Doubly linked list
 #! \return Node that was removed from front
-function shift!(lst::DoublyLinkedList)
+function Base.shift!(lst::DoublyLinkedList)
   if lst.head == nothing
     return nothing
   elseif lst.head == lst.tail
@@ -313,7 +313,7 @@ end
 #!
 #! \param lst Doubly linked list
 #! \return Node that was removed from end
-function pop!(lst::DoublyLinkedList)
+function Base.pop!(lst::DoublyLinkedList)
   if lst.tail == nothing
     return nothing;
   elseif lst.tail == lst.head
