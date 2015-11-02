@@ -9,18 +9,18 @@ abstract AbstractNode{T}
 
 #! Singly linked list node implementation
 type SinglyLinkedListNode{T} <: AbstractNode{T}
-  next::Union(SinglyLinkedListNode{T}, Nothing)
+  next::Union{SinglyLinkedListNode{T}, Void}
   val::T
 
   SinglyLinkedListNode(val::T) = new(nothing, val);
-  SinglyLinkedListNode(next::Union(SinglyLinkedListNode, Nothing), val::T) = (
+  SinglyLinkedListNode(next::Union{SinglyLinkedListNode, Void}, val::T) = (
     new(next, val));
 end
 
 #! Singly linked list implementation
 type SinglyLinkedList{T} <: AbstractList{T}
-  head::Union(SinglyLinkedListNode{T}, Nothing)
-  tail::Union(SinglyLinkedListNode{T}, Nothing)
+  head::Union{SinglyLinkedListNode{T}, Void}
+  tail::Union{SinglyLinkedListNode{T}, Void}
   len::Int
 
   SinglyLinkedList() = new(nothing, nothing, 0);
@@ -152,20 +152,20 @@ end
 
 #! Doubly linked list node implementation
 type DoublyLinkedListNode{T} <: AbstractNode{T}
-  next::Union(DoublyLinkedListNode{T}, Nothing)
-  prev::Union(DoublyLinkedListNode{T}, Nothing)
+  next::Union{DoublyLinkedListNode{T}, Void}
+  prev::Union{DoublyLinkedListNode{T}, Void}
   val::T
 
   DoublyLinkedListNode(val::T) = new(nothing, nothing, val);
-  DoublyLinkedListNode(next::Union(DoublyLinkedListNode, Nothing),
-                       prev::Union(DoublyLinkedListNode, Nothing),
+  DoublyLinkedListNode(next::Union{DoublyLinkedListNode, Void},
+                       prev::Union{DoublyLinkedListNode, Void},
                        val::T) = (new(next, prev, val));
 end
 
 #! Doubly linked list implementation
 type DoublyLinkedList{T} <: AbstractList{T}
-  head::Union(DoublyLinkedListNode{T}, Nothing)
-  tail::Union(DoublyLinkedListNode{T}, Nothing)
+  head::Union{DoublyLinkedListNode{T}, Void}
+  tail::Union{DoublyLinkedListNode{T}, Void}
   len::Int
 
   DoublyLinkedList() = new(nothing, nothing, 0);
@@ -349,7 +349,7 @@ end
 
 #! Terminate iteration
 function Base.done{T}(lst::AbstractList{T},
-                      node::Union(AbstractNode{T}, Nothing))
+                      node::Union{AbstractNode{T}, Void})
   if node == nothing
     return true;
   end
