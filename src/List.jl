@@ -109,6 +109,23 @@ function remove!(lst::SinglyLinkedList, idx::Int)
   return result;
 end
 
+#! Remove an item from a singly linked list
+#!
+#! \param lst Singly linked list
+#! \param val Value of node to search and remove for
+#! \return Whether or not
+function remove!{T}(lst::SinglyLinkedList{T}, val::T)
+  idx::Int = 0;
+  for node in lst
+    idx += 1;
+    if node.val == val
+      return remove!(lst, idx);
+    end
+  end
+
+  return nothing; 
+end
+
 #! Remove an item from the beginning of a singly linked list
 #!
 #! \param lst Singly linked list
@@ -284,6 +301,21 @@ function remove!(lst::DoublyLinkedList, pnode::DoublyLinkedListNode)
     pnode.next.prev = pnode.prev;
     return pnode;
   end
+end
+
+#! Remove an item from a doubly linked list
+#!
+#! \param lst Doubly linked list
+#! \param val Value of node to search and remove for
+#! \return Whether or not
+function remove!{T}(lst::DoublyLinkedList{T}, val::T)
+  for node in lst
+    if node.val == val
+      return remove!(lst, node);
+    end
+  end
+
+  return nothing; 
 end
 
 #! Remove an item from the beginning of a doubly linked list
